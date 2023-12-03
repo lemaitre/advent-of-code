@@ -5,7 +5,8 @@
   "rust-analyzer.cachePriming.enable": false,
   "rust-analyzer.linkedProjects": [
     "./day-00/Cargo.toml",
-    "./day-01/Cargo.toml"
+    "./day-01/Cargo.toml",
+    "./day-02/Cargo.toml"
   ],
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
