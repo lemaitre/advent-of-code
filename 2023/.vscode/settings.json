@@ -1,0 +1,13 @@
+{
+  "[rust]": {
+    "editor.tabSize": 4
+  },
+  "rust-analyzer.cachePriming.enable": false,
+  "rust-analyzer.linkedProjects": [
+    "./day-00/Cargo.toml",
+    "./day-01/Cargo.toml"
+  ],
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "files.autoSave": "off"
+}
