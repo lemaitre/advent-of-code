@@ -1,6 +1,11 @@
+mod grid;
+pub use grid::Grid;
+
 use std::fmt::{Debug, Display};
 
 use ascii::{AsciiChar, AsciiStr};
+
+pub use ascii;
 
 pub trait CollectExact<T> {
     type Error;

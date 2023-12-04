@@ -15,5 +15,4 @@ path = "src/part-b.rs"
 
 [dependencies]
 anyhow = "1.0"
-ascii = "1.1"
 aoc-lib = { path = "../aoc-lib" }

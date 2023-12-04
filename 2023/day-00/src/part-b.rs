@@ -1,5 +1,5 @@
 use anyhow::Result;
-use ascii::{AsAsciiStr, AsciiStr};
+use aoc_lib::ascii::{AsAsciiStr, AsciiStr};
 
 fn main() {
     let filename = std::env::args().nth(1).unwrap_or("input.txt".to_string());

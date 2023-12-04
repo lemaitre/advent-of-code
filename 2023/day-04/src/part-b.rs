@@ -1,5 +1,5 @@
 use anyhow::Result;
-use ascii::{AsAsciiStr, AsciiStr};
+use aoc_lib::ascii::{AsAsciiStr, AsciiStr};
 
 mod game;
 

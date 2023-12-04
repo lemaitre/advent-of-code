@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
 use anyhow::Result;
+use aoc_lib::ascii::{AsciiChar, AsciiStr};
 use aoc_lib::{SplitExact, SplitExactWhitespace};
-use ascii::{AsciiChar, AsciiStr};
 
 pub fn foreach(
     input: &AsciiStr,

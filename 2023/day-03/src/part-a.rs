@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 use anyhow::Result;
-use ascii::{AsAsciiStr, AsciiChar, AsciiStr};
+use aoc_lib::ascii::{AsAsciiStr, AsciiChar, AsciiStr};
 
 fn main() {
     let filename = std::env::args().nth(1).unwrap_or("input.txt".to_string());
