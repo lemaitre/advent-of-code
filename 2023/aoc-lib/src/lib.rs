@@ -1,9 +1,10 @@
 mod grid;
 pub use grid::Grid;
 
-use std::fmt::{Debug, Display};
+use std::{fmt::Debug, mem::MaybeUninit};
 
 use ascii::{AsciiChar, AsciiStr};
+use thiserror::Error;
 
 pub use ascii;
 
@@ -12,23 +13,54 @@ pub trait CollectExact<T> {
     fn collect_exact(self) -> Result<T, Self::Error>;
 }
 
-#[derive(Debug, Clone)]
-pub struct ArrayCollectExactError {}
-
-impl std::error::Error for ArrayCollectExactError {}
-
-impl Display for ArrayCollectExactError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str("Cannot collect, wrong number of elements")
-    }
+#[derive(Error, Debug)]
+pub enum ArrayCollectExactError {
+    #[error(
+        "Iterator did not produce enough elements for the array (expected: {expected}, got: {got})"
+    )]
+    NotEnoughElement { expected: usize, got: usize },
+    #[error(
+        "Iterator produced too many elements for the array (expected: {expected}, got: {got})"
+    )]
+    TooManyElement { expected: usize, got: usize },
 }
 
-impl<T, I: Iterator<Item = T>, const N: usize> CollectExact<[T; N]> for I {
+impl<T: Sized, I: Iterator<Item = T>, const N: usize> CollectExact<[T; N]> for I {
     type Error = ArrayCollectExactError;
-    fn collect_exact(self) -> Result<[T; N], Self::Error> {
-        self.collect::<Vec<_>>()
-            .try_into()
-            .map_err(|_| ArrayCollectExactError {})
+    fn collect_exact(mut self) -> Result<[T; N], Self::Error> {
+        let mut arr: [MaybeUninit<T>; N] = unsafe { MaybeUninit::uninit().assume_init() };
+        let mut i = 0;
+        let mut error = None;
+
+        while i < N {
+            match self.next() {
+                Some(x) => {
+                    arr[i].write(x);
+                    i += 1;
+                }
+                None => {
+                    error = Some(ArrayCollectExactError::NotEnoughElement {
+                        expected: N,
+                        got: i,
+                    });
+                    break;
+                }
+            }
+        }
+        if error.is_none() && self.next().is_some() {
+            error = Some(ArrayCollectExactError::TooManyElement {
+                expected: N,
+                got: N + 1 + self.count(),
+            });
+        }
+        if let Some(error) = error {
+            for x in &mut arr[0..i] {
+                unsafe { x.assume_init_drop() };
+            }
+            return Err(error);
+        }
+
+        Ok(arr.map(|x| unsafe { x.assume_init() }))
     }
 }
 
