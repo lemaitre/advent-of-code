@@ -1,6 +1,9 @@
 mod grid;
 pub use grid::Grid;
 
+mod factor_expand;
+pub use factor_expand::{Expand, Factor};
+
 use std::{fmt::Debug, mem::MaybeUninit};
 
 use ascii::{AsciiChar, AsciiStr};
@@ -109,5 +112,43 @@ impl SplitExactWhitespace for &AsciiStr {
         self.split(AsciiChar::Space)
             .filter(|s| !s.is_empty())
             .collect_exact()
+    }
+}
+
+pub trait SplitWhitespace: Sized {
+    type Iter: Iterator<Item = Self>;
+    fn split_whitespace(self) -> Self::Iter;
+}
+
+impl<'a> SplitWhitespace for &'a AsciiStr {
+    type Iter = SplitWhitespaceAscii<'a>;
+
+    fn split_whitespace(self) -> Self::Iter {
+        Self::Iter { string: self }
+    }
+}
+
+pub struct SplitWhitespaceAscii<'a> {
+    string: &'a AsciiStr,
+}
+
+impl<'a> Iterator for SplitWhitespaceAscii<'a> {
+    type Item = &'a AsciiStr;
+
+    #[allow(clippy::mem_replace_with_default)]
+    fn next(&mut self) -> Option<Self::Item> {
+        let string = std::mem::replace(&mut self.string, Default::default()).trim_start();
+
+        if string.is_empty() {
+            return None;
+        }
+
+        for (i, ch) in string.into_iter().enumerate() {
+            if ch.is_whitespace() {
+                self.string = &string[i..];
+                return Some(&string[..i]);
+            }
+        }
+        Some(string)
     }
 }

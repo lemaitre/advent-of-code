@@ -9,7 +9,9 @@
     "./day-01/Cargo.toml",
     "./day-02/Cargo.toml",
     "./day-03/Cargo.toml",
-    "./day-04/Cargo.toml"
+    "./day-04/Cargo.toml",
+    "./day-05/Cargo.toml",
+    "./day-06/Cargo.toml"
   ],
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
