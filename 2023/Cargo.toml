@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+
+members = [
+  "aoc-lib",
+  "day-00",
+  "day-01",
+  "day-02",
+  "day-03",
+  "day-04",
+  "day-05",
+  "day-06",
+  "day-07",
+  "day-08",
+]
