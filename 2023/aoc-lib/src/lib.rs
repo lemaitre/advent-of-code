@@ -4,6 +4,9 @@ pub use grid::Grid;
 mod factor_expand;
 pub use factor_expand::{Expand, Factor};
 
+mod math;
+pub use math::{gcd, lcm};
+
 use std::{fmt::Debug, mem::MaybeUninit};
 
 use ascii::{AsciiChar, AsciiStr};

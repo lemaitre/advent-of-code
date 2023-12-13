@@ -12,7 +12,8 @@
     "./day-04/Cargo.toml",
     "./day-05/Cargo.toml",
     "./day-06/Cargo.toml",
-    "./day-07/Cargo.toml"
+    "./day-07/Cargo.toml",
+    "./day-08/Cargo.toml"
   ],
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
