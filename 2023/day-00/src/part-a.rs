@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use anyhow::Result;
 use aoc_lib::ascii::{AsAsciiStr, AsciiStr};
 
@@ -11,6 +13,8 @@ fn main() {
 }
 
 fn solve(input: &AsciiStr) -> Result<()> {
-    println!("Part A:\n{input}");
+    let timer = Instant::now();
+    let elapsed = timer.elapsed();
+    println!("Part A ({elapsed:?}):\n{input}");
     Ok(())
 }

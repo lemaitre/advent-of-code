@@ -13,6 +13,10 @@ path = "src/part-a.rs"
 name = "part-b"
 path = "src/part-b.rs"
 
+[[bin]]
+name = "part-b2"
+path = "src/part-b2.rs"
+
 [dependencies]
 anyhow = "1.0"
 aoc-lib = { path = "../aoc-lib" }

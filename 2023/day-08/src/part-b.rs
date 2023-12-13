@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, time::Instant};
 
 use anyhow::{anyhow, Result};
 use aoc_lib::{
@@ -16,6 +16,7 @@ fn main() {
 }
 
 fn solve(input: &AsciiStr) -> Result<()> {
+    let timer = Instant::now();
     let mut lines = input.lines();
 
     let directions = lines.next().ok_or(anyhow!("no directions given"))?;
@@ -58,6 +59,7 @@ fn solve(input: &AsciiStr) -> Result<()> {
         combined = lcm(combined, i as u64);
     }
 
-    println!("Part B:\n{combined}");
+    let elapsed = timer.elapsed();
+    println!("Part B ({elapsed:?}):\n{combined}");
     Ok(())
 }
