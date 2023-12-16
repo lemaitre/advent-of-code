@@ -155,3 +155,25 @@ impl<'a> Iterator for SplitWhitespaceAscii<'a> {
         Some(string)
     }
 }
+
+impl<'a> DoubleEndedIterator for SplitWhitespaceAscii<'a> {
+    #[allow(clippy::mem_replace_with_default)]
+    fn next_back(&mut self) -> Option<Self::Item> {
+        let string = std::mem::replace(&mut self.string, Default::default()).trim_end();
+
+        if string.is_empty() {
+            return None;
+        }
+
+        let mut i = string.len();
+
+        while i > 0 {
+            if string[i - 1].is_whitespace() {
+                self.string = &string[..i];
+                return Some(&string[i..]);
+            }
+            i -= 1;
+        }
+        Some(string)
+    }
+}
