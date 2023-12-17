@@ -10,6 +10,9 @@ pub use math::{gcd, lcm};
 mod char_ext;
 pub use char_ext::CharExt;
 
+mod union_find;
+pub use union_find::UnionFind;
+
 use std::{fmt::Debug, mem::MaybeUninit};
 
 use ascii::{AsciiChar, AsciiStr};
