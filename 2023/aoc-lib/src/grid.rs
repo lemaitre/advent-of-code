@@ -1,10 +1,23 @@
-use std::ops::{Index, IndexMut};
+use std::{
+    fmt::Display,
+    ops::{Index, IndexMut},
+};
+
+use thiserror::Error;
 
 #[derive(Debug, Clone)]
 pub struct Grid<T> {
     nrows: usize,
     ncols: usize,
     data: Vec<T>,
+}
+
+#[derive(Debug, Error)]
+pub enum GridAddRowError<E> {
+    #[error("Tried to add a row of length {got} to a grid {expected}-wide")]
+    WrongSize { expected: usize, got: usize },
+    #[error("Iteration error")]
+    IterationError(#[from] E),
 }
 
 impl<T> Grid<T> {
@@ -24,14 +37,55 @@ impl<T> Grid<T> {
             data: Vec::with_capacity(capacity),
         }
     }
-    pub fn add_row<I: IntoIterator<Item = T>>(&mut self, iter: I) -> Result<(), usize> {
+    pub fn add_row<I: IntoIterator<Item = T>>(
+        &mut self,
+        iter: I,
+    ) -> Result<(), GridAddRowError<()>> {
         self.data.reserve(self.data.len() + self.ncols);
         self.data.extend(iter);
 
         let n = self.data.len() - self.nrows * self.ncols;
+        if self.ncols == 0 {
+            self.ncols = n;
+        }
         if n != self.ncols {
             self.data.truncate(self.nrows * self.ncols);
-            return Err(n);
+            return Err(GridAddRowError::WrongSize {
+                expected: self.ncols,
+                got: n,
+            });
+        }
+
+        self.nrows += 1;
+
+        Ok(())
+    }
+    pub fn try_add_row<E, I: IntoIterator<Item = Result<T, E>>>(
+        &mut self,
+        iter: I,
+    ) -> Result<(), GridAddRowError<E>> {
+        self.data.reserve(self.data.len() + self.ncols);
+
+        for x in iter {
+            match x {
+                Ok(x) => self.data.push(x),
+                Err(e) => {
+                    self.data.truncate(self.nrows * self.ncols);
+                    return Err(GridAddRowError::IterationError(e));
+                }
+            }
+        }
+
+        let n = self.data.len() - self.nrows * self.ncols;
+        if self.ncols == 0 {
+            self.ncols = n;
+        }
+        if n != self.ncols {
+            self.data.truncate(self.nrows * self.ncols);
+            return Err(GridAddRowError::WrongSize {
+                expected: self.ncols,
+                got: n,
+            });
         }
 
         self.nrows += 1;
@@ -57,7 +111,6 @@ impl<T> Grid<T> {
     #[inline]
     pub fn iter(&self) -> GridIterator<'_, T> {
         GridIterator {
-            nrows: self.nrows,
             ncols: self.ncols,
             data: &self.data,
         }
@@ -65,9 +118,24 @@ impl<T> Grid<T> {
     #[inline]
     pub fn iter_mut(&mut self) -> GridIteratorMut<'_, T> {
         GridIteratorMut {
-            nrows: self.nrows,
             ncols: self.ncols,
             data: &mut self.data,
+        }
+    }
+    #[inline]
+    pub fn rows(&self) -> usize {
+        self.nrows
+    }
+    #[inline]
+    pub fn cols(&self) -> usize {
+        self.ncols
+    }
+    #[inline]
+    pub fn map<U>(&self, f: impl FnMut(&T) -> U) -> Grid<U> {
+        Grid {
+            nrows: self.nrows,
+            ncols: self.ncols,
+            data: self.data.iter().map(f).collect(),
         }
     }
 }
@@ -92,6 +160,18 @@ impl<T> Default for Grid<T> {
     }
 }
 
+impl<T: Display> Display for Grid<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for row in self.iter() {
+            for cell in row {
+                f.write_fmt(format_args!("{cell}"))?;
+            }
+            f.write_str("\n")?;
+        }
+        Ok(())
+    }
+}
+
 impl<T> Index<usize> for Grid<T> {
     type Output = [T];
 
@@ -110,7 +190,6 @@ impl<T> IndexMut<usize> for Grid<T> {
 }
 
 pub struct GridIterator<'a, T> {
-    nrows: usize,
     ncols: usize,
     data: &'a [T],
 }
@@ -120,7 +199,7 @@ impl<'a, T> Iterator for GridIterator<'a, T> {
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        if self.nrows > 0 {
+        if self.ncols > 0 && self.data.len() >= self.ncols {
             let (head, tail) = self.data.split_at(self.ncols);
             self.data = tail;
             Some(head)
@@ -130,7 +209,6 @@ impl<'a, T> Iterator for GridIterator<'a, T> {
     }
 }
 pub struct GridIteratorMut<'a, T> {
-    nrows: usize,
     ncols: usize,
     data: &'a mut [T],
 }
@@ -140,7 +218,7 @@ impl<'a, T> Iterator for GridIteratorMut<'a, T> {
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        if self.nrows > 0 {
+        if self.ncols > 0 && self.data.len() >= self.ncols {
             let data = std::mem::take(&mut self.data);
             let (head, tail) = data.split_at_mut(self.ncols);
             self.data = tail;

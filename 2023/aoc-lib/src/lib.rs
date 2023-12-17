@@ -7,6 +7,9 @@ pub use factor_expand::{Expand, Factor};
 mod math;
 pub use math::{gcd, lcm};
 
+mod char_ext;
+pub use char_ext::CharExt;
+
 use std::{fmt::Debug, mem::MaybeUninit};
 
 use ascii::{AsciiChar, AsciiStr};
