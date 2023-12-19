@@ -5,7 +5,7 @@ mod factor_expand;
 pub use factor_expand::{Expand, Factor};
 
 mod math;
-pub use math::{gcd, lcm};
+pub use math::{abs_diff, gcd, lcm};
 
 mod char_ext;
 pub use char_ext::CharExt;

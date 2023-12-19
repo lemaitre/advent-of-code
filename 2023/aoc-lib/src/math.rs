@@ -1,4 +1,4 @@
-use std::mem::swap;
+use std::{mem::swap, ops::Sub};
 
 pub fn gcd(mut n: u64, mut m: u64) -> u64 {
     // Stein's binary GCD algorithm
@@ -38,4 +38,16 @@ pub fn gcd(mut n: u64, mut m: u64) -> u64 {
 
 pub fn lcm(a: u64, b: u64) -> u64 {
     a * b / gcd(a, b)
+}
+
+pub fn abs_diff<T>(a: T, b: T) -> <T as Sub>::Output
+where
+    T: Sub,
+    T: Ord,
+{
+    if a < b {
+        b - a
+    } else {
+        a - b
+    }
 }
