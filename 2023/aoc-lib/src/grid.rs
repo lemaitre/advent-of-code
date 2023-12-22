@@ -13,7 +13,9 @@ pub struct Grid<T> {
 }
 
 #[derive(Debug, Error)]
-pub enum GridAddRowError<E> {
+pub enum InfallibleError {}
+#[derive(Debug, Error)]
+pub enum GridAddRowError<E = InfallibleError> {
     #[error("Tried to add a row of length {got} to a grid {expected}-wide")]
     WrongSize { expected: usize, got: usize },
     #[error("Iteration error")]
@@ -37,10 +39,7 @@ impl<T> Grid<T> {
             data: Vec::with_capacity(capacity),
         }
     }
-    pub fn add_row<I: IntoIterator<Item = T>>(
-        &mut self,
-        iter: I,
-    ) -> Result<(), GridAddRowError<()>> {
+    pub fn add_row<I: IntoIterator<Item = T>>(&mut self, iter: I) -> Result<(), GridAddRowError> {
         self.data.reserve(self.data.len() + self.ncols);
         self.data.extend(iter);
 
@@ -137,6 +136,12 @@ impl<T> Grid<T> {
             ncols: self.ncols,
             data: self.data.iter().map(f).collect(),
         }
+    }
+    #[inline]
+    pub fn clear(&mut self) {
+        self.nrows = 0;
+        self.ncols = 0;
+        self.data.clear();
     }
 }
 
