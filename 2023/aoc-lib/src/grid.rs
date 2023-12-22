@@ -1,11 +1,12 @@
 use std::{
     fmt::Display,
+    hash::Hash,
     ops::{Index, IndexMut},
 };
 
 use thiserror::Error;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Grid<T> {
     nrows: usize,
     ncols: usize,
@@ -21,6 +22,10 @@ pub enum GridAddRowError<E = InfallibleError> {
     #[error("Iteration error")]
     IterationError(#[from] E),
 }
+
+#[derive(Debug, Error)]
+#[error("Duplicated index ({0}, {1})")]
+pub struct DuplicatedIndexError(isize, isize);
 
 impl<T> Grid<T> {
     #[inline]
@@ -136,6 +141,26 @@ impl<T> Grid<T> {
             ncols: self.ncols,
             data: self.data.iter().map(f).collect(),
         }
+    }
+    #[inline]
+    pub fn get_many_mut<const N: usize>(
+        &mut self,
+        points: [(isize, isize); N],
+    ) -> Result<[Option<&mut T>; N], DuplicatedIndexError> {
+        let mut sorted_points = points;
+        sorted_points.sort();
+        let mut last = points[0];
+        for point in points.iter().copied().skip(1) {
+            if point == last {
+                return Err(DuplicatedIndexError(point.0, point.1));
+            }
+            last = point;
+        }
+
+        Ok(points.map(|(i, j)| {
+            self.get_mut(i, j)
+                .and_then(|r| unsafe { (r as *mut T).as_mut() })
+        }))
     }
     #[inline]
     pub fn clear(&mut self) {
