@@ -20,6 +20,12 @@ use thiserror::Error;
 
 pub use ascii;
 
+mod range_map;
+pub use range_map::{RangeMap, RangeMap3WayRange};
+
+mod range_set;
+pub use range_set::{RangeSet, RangeSet3WayRange};
+
 pub trait CollectExact<T> {
     type Error;
     fn collect_exact(self) -> Result<T, Self::Error>;
