@@ -3,11 +3,11 @@ use std::time::Instant;
 use anyhow::Result;
 use aoc_lib::{
     ascii::{AsAsciiStr, AsciiStr},
-    Grid,
+    Direction, Grid,
 };
 
 mod tile;
-pub use tile::{Direction, Tile};
+pub use tile::Tile;
 
 fn main() {
     let filename = std::env::args().nth(1).unwrap_or("input.txt".to_string());
