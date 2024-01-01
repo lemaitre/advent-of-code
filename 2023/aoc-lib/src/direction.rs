@@ -1,13 +1,17 @@
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use std::fmt::Display;
 
 use Direction::{East, North, South, West};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, IntoPrimitive, TryFromPrimitive,
+)]
+#[repr(u8)]
 pub enum Direction {
-    North,
-    South,
-    East,
-    West,
+    North = 0,
+    South = 1,
+    East = 2,
+    West = 3,
 }
 
 impl Display for Direction {
