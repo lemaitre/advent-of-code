@@ -115,6 +115,30 @@ where
     }
 }
 
+impl<L, F> UnionFind<L, F>
+where
+    L: Copy,
+    L: TryInto<usize>,
+    L: TryFrom<usize>,
+    L: Ord,
+    F: AddAssign,
+    F: Default,
+{
+    pub fn transitive_closure(&mut self) {
+        for label in 1..self.data.len() {
+            let parent = self.data[label].0;
+            if let Ok(label) = L::try_from(label) {
+                if label != parent {
+                    let root = *self.parent(parent);
+                    *self.parent_mut(label) = root;
+                    let f = std::mem::take(self.features_mut(label));
+                    *self.features_mut(root) += f;
+                }
+            }
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct UnionFindIterator<'a, L, F> {
     i: usize,

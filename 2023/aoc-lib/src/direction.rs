@@ -1,5 +1,7 @@
+use ascii::{AsciiChar, AsciiStr, AsciiString};
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use std::fmt::Display;
+use thiserror::Error;
 
 use Direction::{East, North, South, West};
 
@@ -26,7 +28,33 @@ impl Display for Direction {
     }
 }
 
+#[derive(Debug, Error)]
+pub enum DirectionParseError {
+    #[error("Could not convert empty string into a direction")]
+    EmptyString,
+    #[error("Could not convert character '{0}' into a direction")]
+    InvalidChar(AsciiChar),
+    #[error("Could not convert string \"{0}\" into a direction because it is too long")]
+    StringTooLong(AsciiString),
+}
+
 impl Direction {
+    pub fn from_char(chr: AsciiChar) -> Result<Self, DirectionParseError> {
+        match chr {
+            AsciiChar::N | AsciiChar::U | AsciiChar::Caret => Ok(North),
+            AsciiChar::S | AsciiChar::D | AsciiChar::v | AsciiChar::V => Ok(South),
+            AsciiChar::E | AsciiChar::R | AsciiChar::GreaterThan => Ok(East),
+            AsciiChar::W | AsciiChar::L | AsciiChar::LessThan => Ok(West),
+            _ => Err(DirectionParseError::InvalidChar(chr)),
+        }
+    }
+    pub fn from_ascii(s: &AsciiStr) -> Result<Self, DirectionParseError> {
+        match s.as_slice() {
+            [] => Err(DirectionParseError::EmptyString),
+            [chr] => Self::from_char(*chr),
+            _ => Err(DirectionParseError::StringTooLong(s.to_owned())),
+        }
+    }
     pub fn step(self, i: isize, j: isize) -> (isize, isize) {
         match self {
             North => (i - 1, j),
