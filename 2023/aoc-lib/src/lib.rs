@@ -26,6 +26,9 @@ pub use range_map::{RangeMap, RangeMap3WayRange};
 mod range_set;
 pub use range_set::{RangeSet, RangeSet3WayRange};
 
+mod int_map;
+pub use int_map::IntegerMap;
+
 mod direction;
 pub use direction::Direction;
 
