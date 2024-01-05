@@ -1,4 +1,6 @@
-use std::{collections::HashMap, hash::Hash};
+use std::hash::Hash;
+
+use hashbrown::HashMap;
 
 use num::{Bounded, FromPrimitive, Integer, ToPrimitive};
 
@@ -46,8 +48,8 @@ where
 {
     pub fn id(&mut self, value: T) -> I {
         match self.value2int.entry(value.clone()) {
-            std::collections::hash_map::Entry::Occupied(entry) => entry.get().clone(),
-            std::collections::hash_map::Entry::Vacant(entry) => {
+            hashbrown::hash_map::Entry::Occupied(entry) => entry.get().clone(),
+            hashbrown::hash_map::Entry::Vacant(entry) => {
                 let id = I::from_usize(self.int2value.len()).unwrap_or(I::max_value());
                 self.int2value.push(value);
                 entry.insert(id.clone());

@@ -49,10 +49,10 @@ fn solve(input: &AsciiStr) -> Result<()> {
             let value = &condition[2..];
 
             let category = match category {
-                AsciiChar::x => workflow::X,
-                AsciiChar::m => workflow::M,
-                AsciiChar::a => workflow::A,
-                AsciiChar::s => workflow::S,
+                AsciiChar::x => Part::X,
+                AsciiChar::m => Part::M,
+                AsciiChar::a => Part::A,
+                AsciiChar::s => Part::S,
                 _ => bail!("'{category}' is not a valid category"),
             } as u8;
             let comparison = match comparison {
@@ -60,7 +60,7 @@ fn solve(input: &AsciiStr) -> Result<()> {
                 AsciiChar::GreaterThan => WorkflowComparison::GreaterThan,
                 _ => bail!("'{comparison}' is not a valid comparison"),
             };
-            let value = value.as_str().parse::<u32>()?;
+            let value = value.as_str().parse()?;
             let action = match action.as_slice() {
                 [AsciiChar::A] => WorkflowAction::Accept,
                 [AsciiChar::R] => WorkflowAction::Reject,
@@ -94,7 +94,7 @@ fn solve(input: &AsciiStr) -> Result<()> {
         let part = Part(
             line[1..line.len() - 1]
                 .split_exact(AsciiChar::Comma)?
-                .map(|s| s[2..].as_str().parse::<u32>())
+                .map(|s| s[2..].as_str().parse())
                 .factor()?,
         );
 
@@ -104,7 +104,7 @@ fn solve(input: &AsciiStr) -> Result<()> {
             action = workflows[id as usize].check(&part);
         }
         if action == WorkflowAction::Accept {
-            s += part.0.iter().copied().sum::<u32>() as u64;
+            s += part.0.iter().copied().sum::<u16>() as u64;
         }
     }
 
