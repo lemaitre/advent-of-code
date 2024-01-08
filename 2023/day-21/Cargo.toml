@@ -16,4 +16,3 @@ path = "src/part-b.rs"
 [dependencies]
 anyhow = "1.0"
 aoc-lib = { path = "../aoc-lib" }
-bitvec = "1.0"
