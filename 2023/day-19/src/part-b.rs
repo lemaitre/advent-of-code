@@ -31,7 +31,7 @@ pub struct WokrflowExhaustive {
 }
 
 #[allow(unused)]
-pub fn print_workflows(id2map: &IntegerMap<&AsciiStr, u16>, workflows: &Vec<WokrflowExhaustive>) {
+pub fn print_workflows(id2map: &IntegerMap<&AsciiStr, u16>, workflows: &[WokrflowExhaustive]) {
     println!("==========");
     for (i, workflow) in workflows.iter().enumerate() {
         println!("{i} ({})", id2map.value(i as u16));
@@ -56,14 +56,14 @@ fn solve(input: &AsciiStr) -> Result<()> {
 
     let mut lines = input.lines();
     let mut start = 0;
-    while let Some(line) = lines.next() {
+    for line in lines.by_ref() {
         if line.is_empty() {
             break;
         }
 
         let [name, rest] = line.split_exact(AsciiChar::CurlyBraceOpen)?;
         let id = id_map.id(name);
-        if name.as_slice() == &[AsciiChar::i, AsciiChar::n] {
+        if name.as_slice() == [AsciiChar::i, AsciiChar::n] {
             start = id;
         }
 
@@ -165,7 +165,7 @@ fn solve(input: &AsciiStr) -> Result<()> {
         // print_workflows(&id_map, &workflows);
         for i in 0..workflows.len() {
             let mut workflow = std::mem::take(&mut workflows[i]);
-            for range in std::mem::replace(&mut workflow.maps, Vec::new()) {
+            for range in std::mem::take(&mut workflow.maps) {
                 let target = &workflows[range.target as usize];
                 workflow
                     .maps

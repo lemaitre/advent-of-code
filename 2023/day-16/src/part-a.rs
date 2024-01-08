@@ -22,9 +22,7 @@ pub struct Stack(Vec<(isize, isize, Direction)>);
 
 impl Stack {
     pub fn new() -> Self {
-        let mut stack = Vec::new();
-        stack.push((0, -1, Direction::East));
-        Self(stack)
+        Self(vec![(0, -1, Direction::East)])
     }
 
     pub fn push(&mut self, i: isize, j: isize, dir: Direction) {
@@ -38,6 +36,12 @@ impl Stack {
     }
     pub fn pop(&mut self) -> Option<(isize, isize, Direction)> {
         self.0.pop()
+    }
+}
+
+impl Default for Stack {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

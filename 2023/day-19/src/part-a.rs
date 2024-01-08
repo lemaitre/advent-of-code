@@ -26,14 +26,14 @@ fn solve(input: &AsciiStr) -> Result<()> {
 
     let mut lines = input.lines();
     let mut start = 0;
-    while let Some(line) = lines.next() {
+    for line in lines.by_ref() {
         if line.is_empty() {
             break;
         }
 
         let [name, rest] = line.split_exact(AsciiChar::CurlyBraceOpen)?;
         let id = id_map.id(name);
-        if name.as_slice() == &[AsciiChar::i, AsciiChar::n] {
+        if name.as_slice() == [AsciiChar::i, AsciiChar::n] {
             start = id;
         }
 

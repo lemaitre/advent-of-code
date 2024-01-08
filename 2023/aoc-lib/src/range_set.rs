@@ -29,7 +29,7 @@ impl<T> RangeSet<T> {
         self.0
     }
     pub fn iter(&self) -> RangeSetIter<'_, T> {
-        (&self).into_iter()
+        self.into_iter()
     }
 }
 
@@ -113,10 +113,7 @@ impl<T> Iterator for RangeSetIterOwned<T> {
     type Item = Range<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        match self.0.next() {
-            Some((r, ())) => Some(r),
-            None => None,
-        }
+        self.0.next().map(|(r, ())| r)
     }
 }
 
@@ -189,10 +186,7 @@ where
     type Item = Range<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        match self.0.next() {
-            Some((range, _, _)) => Some(range),
-            None => None,
-        }
+        self.0.next().map(|(range, _, _)| range)
     }
 }
 #[derive(Debug)]
@@ -212,6 +206,7 @@ where
 }
 
 #[cfg(test)]
+#[allow(clippy::single_range_in_vec_init)]
 mod tests {
     use super::*;
 
@@ -265,7 +260,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([])
                 .threeway(&RangeSet::<u32>::from_iter([]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![]
         );
@@ -273,14 +267,12 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..4, 6..8])
                 .threeway(&RangeSet::<u32>::from_iter([]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![Left(0..4), Left(6..8)]
         );
         assert_eq!(
             RangeSet::<u32>::from_iter([])
                 .threeway(&RangeSet::<u32>::from_iter([0..4, 6..8]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![Right(0..4), Right(6..8)]
         );
@@ -288,7 +280,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..4])
                 .threeway(&RangeSet::<u32>::from_iter([2..6]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![Left(0..2), Both(2..4), Right(4..6)]
         );
@@ -296,7 +287,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..4, 10..12])
                 .threeway(&RangeSet::<u32>::from_iter([2..6, 14..16]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![
                 Left(0..2),
@@ -310,7 +300,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..6, 10..12])
                 .threeway(&RangeSet::<u32>::from_iter([2..6, 12..16]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![Left(0..2), Both(2..6), Left(10..12), Right(12..16)]
         );
@@ -318,7 +307,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..6, 10..16, 20..22])
                 .threeway(&RangeSet::<u32>::from_iter([2..6, 12..16, 21..22]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![
                 Left(0..2),
@@ -336,7 +324,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([])
                 .union(&RangeSet::<u32>::from_iter([]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![]
         );
@@ -344,14 +331,12 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..4, 6..8])
                 .union(&RangeSet::<u32>::from_iter([]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![0..4, 6..8]
         );
         assert_eq!(
             RangeSet::<u32>::from_iter([])
                 .union(&RangeSet::<u32>::from_iter([0..4, 6..8]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![0..4, 6..8]
         );
@@ -359,7 +344,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..4])
                 .union(&RangeSet::<u32>::from_iter([2..6]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![0..6]
         );
@@ -367,7 +351,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..4, 10..12])
                 .union(&RangeSet::<u32>::from_iter([2..6, 14..16]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![0..6, 10..12, 14..16,]
         );
@@ -375,7 +358,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..6, 10..12])
                 .union(&RangeSet::<u32>::from_iter([2..6, 12..16]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![0..6, 10..16]
         );
@@ -383,7 +365,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..6, 10..16, 20..22])
                 .union(&RangeSet::<u32>::from_iter([2..6, 12..16, 21..22]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![0..6, 10..16, 20..22,]
         );
@@ -394,7 +375,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([])
                 .intersection(&RangeSet::<u32>::from_iter([]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![]
         );
@@ -402,14 +382,12 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..4, 6..8])
                 .intersection(&RangeSet::<u32>::from_iter([]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![]
         );
         assert_eq!(
             RangeSet::<u32>::from_iter([])
                 .intersection(&RangeSet::<u32>::from_iter([0..4, 6..8]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![]
         );
@@ -417,7 +395,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..4])
                 .intersection(&RangeSet::<u32>::from_iter([2..6]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![2..4]
         );
@@ -425,7 +402,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..4, 10..12])
                 .intersection(&RangeSet::<u32>::from_iter([2..6, 14..16]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![2..4]
         );
@@ -433,7 +409,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..6, 10..12])
                 .intersection(&RangeSet::<u32>::from_iter([2..6, 12..16]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![2..6]
         );
@@ -441,7 +416,6 @@ mod tests {
         assert_eq!(
             RangeSet::<u32>::from_iter([0..6, 10..16, 20..22])
                 .intersection(&RangeSet::<u32>::from_iter([2..6, 12..16, 21..22]))
-                .into_iter()
                 .collect::<Vec<_>>(),
             vec![2..6, 12..16, 21..22]
         );

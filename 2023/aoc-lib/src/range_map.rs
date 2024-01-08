@@ -35,7 +35,7 @@ impl<K, V> RangeMap<K, V> {
         self.0.clear()
     }
     pub fn iter(&self) -> <&[(Range<K>, V)] as IntoIterator>::IntoIter {
-        (&self).into_iter()
+        self.into_iter()
     }
 }
 
@@ -141,7 +141,7 @@ impl<'a, K, V> IntoIterator for &'a RangeMap<K, V> {
     type IntoIter = <&'a [(Range<K>, V)] as IntoIterator>::IntoIter;
 
     fn into_iter(self) -> Self::IntoIter {
-        (&self.0).into_iter()
+        self.0.iter()
     }
 }
 
@@ -259,11 +259,8 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            match self.0.next()? {
-                RangeMap3WayRange::Both(r, left, right) => {
-                    return Some((r, left, right));
-                }
-                _ => (),
+            if let RangeMap3WayRange::Both(r, left, right) = self.0.next()? {
+                return Some((r, left, right));
             }
         }
     }

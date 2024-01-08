@@ -22,9 +22,7 @@ pub struct Stack(Vec<(isize, isize, Direction)>);
 
 impl Stack {
     pub fn new() -> Self {
-        let mut stack = Vec::new();
-        stack.push((0, -1, Direction::East));
-        Self(stack)
+        Self(vec![(0, -1, Direction::East)])
     }
 
     pub fn push(&mut self, i: isize, j: isize, dir: Direction) {
@@ -41,12 +39,18 @@ impl Stack {
     }
 }
 
+impl Default for Stack {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 type BitSet = bitvec::array::BitArray<[u64; 8]>;
 
 fn bit_set(i: usize) -> BitSet {
     let mut set = BitSet::default();
     set.set(i, true);
-    return set;
+    set
 }
 
 fn solve(input: &AsciiStr) -> Result<()> {

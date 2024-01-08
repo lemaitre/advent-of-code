@@ -169,15 +169,13 @@ impl<'a> Relays<'a> {
                 // conjunction
                 relay.state |= 1_i64 << src;
                 mask = ((relay.state != i64::MAX) as u8) << 7;
+            } else if relay.state < 0 {
+                relay.state ^= i64::MAX;
+                mask = (relay.state & 0x80) as u8;
             } else {
-                if relay.state < 0 {
-                    relay.state ^= i64::MAX;
-                    mask = (relay.state & 0x80) as u8;
-                } else {
-                    // conjunction
-                    relay.state &= !(1_i64 << src);
-                    mask = 0x80;
-                }
+                // conjunction
+                relay.state &= !(1_i64 << src);
+                mask = 0x80;
             }
 
             self.queue
