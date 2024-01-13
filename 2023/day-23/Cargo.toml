@@ -1,5 +1,5 @@
 [package]
-name = "day-22"
+name = "day-23"
 version = "0.1.0"
 edition = "2021"
 
@@ -15,4 +15,5 @@ path = "src/part-b.rs"
 
 [dependencies]
 anyhow = "1.0"
+ndarray = "0.15"
 aoc-lib = { path = "../aoc-lib" }

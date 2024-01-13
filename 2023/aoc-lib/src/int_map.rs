@@ -46,16 +46,19 @@ where
     I: ToPrimitive,
     I: Clone,
 {
-    pub fn id(&mut self, value: T) -> I {
+    pub fn try_insert(&mut self, value: T) -> (I, bool) {
         match self.value2int.entry(value.clone()) {
-            hashbrown::hash_map::Entry::Occupied(entry) => entry.get().clone(),
+            hashbrown::hash_map::Entry::Occupied(entry) => (entry.get().clone(), false),
             hashbrown::hash_map::Entry::Vacant(entry) => {
                 let id = I::from_usize(self.int2value.len()).unwrap_or(I::max_value());
                 self.int2value.push(value);
                 entry.insert(id.clone());
-                id
+                (id, true)
             }
         }
+    }
+    pub fn id(&mut self, value: T) -> I {
+        self.try_insert(value).0
     }
 
     pub fn value(&self, id: I) -> T {
