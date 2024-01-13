@@ -1,0 +1,19 @@
+[package]
+name = "day-22"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "part-a"
+path = "src/part-a.rs"
+
+[[bin]]
+name = "part-b"
+path = "src/part-b.rs"
+
+[dependencies]
+anyhow = "1.0"
+ndarray = "0.15"
+aoc-lib = { path = "../aoc-lib" }
