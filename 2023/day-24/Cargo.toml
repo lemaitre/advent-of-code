@@ -15,4 +15,8 @@ path = "src/part-b.rs"
 
 [dependencies]
 anyhow = "1.0"
+
+openblas-src = { version = "0.10" }
+ndarray = "0.15"
+ndarray-linalg = { version = "0.16", features = ["openblas"] }
 aoc-lib = { path = "../aoc-lib" }
