@@ -270,6 +270,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "day-24"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "aoc-lib",
+]
+
+[[package]]
 name = "equivalent"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
