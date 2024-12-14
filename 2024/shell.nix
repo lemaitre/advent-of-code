@@ -5,6 +5,7 @@ pkgs.mkShell {
     bashInteractive
     python3
     python3Packages.click
+    python3Packages.numpy
     vscode
   ];
 }
