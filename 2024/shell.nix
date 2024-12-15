@@ -6,6 +6,7 @@ pkgs.mkShell {
     python3
     python3Packages.click
     python3Packages.numpy
+    python3Packages.portion
     vscode
   ];
 }
