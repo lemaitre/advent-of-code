@@ -6,6 +6,7 @@ from itertools import islice
 import click
 import numpy as np
 
+# https://largo.lip6.fr/~lacas/Publications/TPDS22_maxtree-gpu.pdf
 class MaxTree:
   def __init__(self, grid):
     self.width = grid.shape[1]
